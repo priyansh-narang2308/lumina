@@ -1,7 +1,5 @@
 # Lumina - Autonomous Commerce Media Compiler
 
-Hackathon team repository for Narcos - [hackindia-team:pixels-to-products-cloudinary-ai-hackathon-2026:narcos]
-
 Lumina is an autonomous commerce media compiler built for the Cloudinary AI Hackathon 2026. It transforms unpolished smartphone photos into production-ready, multi-channel catalog assets utilizing a closed-loop AI verification system, extensive Cloudinary transformations, and Lucene-powered search.
 
 ## Live Demo
