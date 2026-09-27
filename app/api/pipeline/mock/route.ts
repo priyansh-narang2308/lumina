@@ -8,13 +8,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const { scenario = "saree", speedMultiplier = 1, isSync = false } = body;
 
-    const publicId = `lumina/demo/${scenario}_${Date.now().toString().slice(-6)}`;
+    // Let runMockPipeline use its internal fallback for publicId
     const assetId = `mock_asset_${scenario}_${Date.now()}`;
 
     if (isSync) {
       const result = await runMockPipeline({
         scenario: scenario as MockScenario,
-        publicId,
         speedMultiplier,
       });
       return NextResponse.json({ success: true, result });
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
 
     runMockPipeline({
       scenario: scenario as MockScenario,
-      publicId,
       speedMultiplier,
     }).catch((err) => {
       console.error("[Mock Pipeline Error]:", err);
@@ -31,7 +29,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       assetId,
-      publicId,
       scenario,
       status: "processing",
       eventsUrl: `/api/events?assetId=${assetId}`,

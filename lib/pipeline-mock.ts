@@ -37,7 +37,7 @@ export async function runMockPipeline(
   const delay = (ms: number) => sleep(Math.max(50, Math.round(ms / speed)));
 
   const publicId =
-    options.publicId || "sample";
+    options.publicId || "main-sample";
   const assetId = `mock_asset_${scenario}_${Date.now()}`;
 
   console.log(`[Mock Pipeline] 🎬 Starting simulated compilation for: ${scenario} (${publicId})`);

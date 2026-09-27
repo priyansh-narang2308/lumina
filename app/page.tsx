@@ -249,11 +249,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative border-y border-border/60 bg-muted/10 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <InteractiveDemoSandbox />
-        </div>
-      </section>
+
 
       <section className="py-20 sm:py-28" id="architecture">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

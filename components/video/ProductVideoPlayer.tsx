@@ -54,8 +54,9 @@ export function ProductVideoPlayer({
   cloudName,
   className = "",
 }: ProductVideoPlayerProps) {
-  const resolvedCloudName =
-    cloudName || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "drntwxfcc";
+  const resolvedCloudName = publicId.startsWith("samples/") 
+    ? "demo" 
+    : (cloudName || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "drntwxfcc");
   const urls = buildVideoUrls(publicId, resolvedCloudName);
   const finalHlsUrl = hlsUrl || urls.hlsUrl;
   const finalMp4Url = mp4Url || urls.mp4Url;

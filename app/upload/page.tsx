@@ -285,7 +285,7 @@ export default function UploadStudioPage() {
                   <BeforeAfter
                     beforeUrl={
                       rawUpload?.secureUrl ||
-                      "https://res.cloudinary.com/drntwxfcc/image/upload/sample.jpg"
+                      "https://res.cloudinary.com/drntwxfcc/image/upload/main-sample.jpg"
                     }
                     afterUrl={familyUrls.hero}
                     beforeScore={
