@@ -9,14 +9,17 @@ Lumina is an autonomous commerce media compilation pipeline designed for the Clo
 ## Problem Statement and Motivation
 
 ### The Problem
-Independent sellers, local artisans, and direct-to-consumer merchants generate high-quality physical goods but rarely possess professional studio photography setups. Their catalog imagery often originates from smartphone cameras under non-standardized conditions: harsh shadows, inconsistent color temperatures, distracting backgrounds, and mismatched aspect ratios. 
+
+Independent sellers, local artisans, and direct-to-consumer merchants generate high-quality physical goods but rarely possess professional studio photography setups. Their catalog imagery often originates from smartphone cameras under non-standardized conditions: harsh shadows, inconsistent color temperatures, distracting backgrounds, and mismatched aspect ratios.
 
 In e-commerce, media quality directly correlates with conversion rates and customer trust. Standard industry remedies, however, present critical trade-offs:
+
 - **Manual Post-Production**: Professional studio photography and graphic design retouching cost between $15 and $50 per SKU, with turnaround times spanning days. This creates an insurmountable barrier for small-to-medium catalogs.
 - **Unconstrained Generative AI**: Off-the-shelf diffusion models often hallucinate or modify core product features—distorting fabric textures, altering logos, or changing item geometry. This introduces high return rates and customer dissatisfaction.
 - **Static Cropping and Resizing**: Traditional rule-based image processing either clips essential product features or creates awkward whitespace letterboxing.
 
 ### Motivation
+
 Lumina was built to solve this dilemma by treating media ingestion as a deterministic compilation process. The objective was not to replace the product, but to compile its presentation: isolating the physical item, normalizing illumination, synthesizing contextual studio environments, generating multi-platform responsive variants, and enforcing automated quality control before publication.
 
 ---
@@ -24,18 +27,22 @@ Lumina was built to solve this dilemma by treating media ingestion as a determin
 ## Key Architectural Decisions
 
 ### 1. Closed-Loop Dual Multimodal Audit Pipeline
+
 - **Decision**: Implemented an automated pre-transformation audit and post-transformation verification cycle using Google Gemini 1.5 Pro.
 - **Rationale**: Generative models cannot be trusted blindly in production commerce. By evaluating the raw image upfront, the system identifies precise technical defects (contrast, framing, clutter) and determines the exact transformation recipe required. The post-transformation audit verifies that the generated asset meets minimum commerce standards and that product integrity remains intact. Assets failing verification are routed to a human review queue rather than reaching the live catalog.
 
 ### 2. Edge-Level Image Processing via Cloudinary vs. GPU Microservices
+
 - **Decision**: Delegated segmentation, background replacement, outpainting, and photometric enhancements directly to Cloudinary URL-based transformation primitives rather than hosting dedicated PyTorch/TensorFlow GPU inference workers.
 - **Rationale**: Managing GPU infrastructure incurs high baseline costs, cold-start delays, and complex auto-scaling logic. Cloudinary offloads transformation execution to globally distributed edge nodes, applying hardware-accelerated algorithms on demand and caching derived variants at the CDN layer. This drastically simplifies the backend architecture while reducing compute overhead.
 
 ### 3. Media-Layer Structured Metadata and Lucene Search vs. Relational-Only Indexing
+
 - **Decision**: Wrote quality scores, audit rationale, and product classifications directly into Cloudinary Structured Metadata (`cld-metadata`) and used the Cloudinary Search API (`cloudinary.search()`) as the primary discovery mechanism.
 - **Rationale**: Decoupling catalog search from relational database queries eliminates database bottlenecks under search-heavy traffic. Storing audit attributes directly on the media record guarantees data locality: an asset carries its own compliance score, aspect ratios, and visual tags wherever it is served. The Lucene engine enables sub-100ms multi-facet filtering across visual quality metrics without cross-table SQL joins.
 
 ### 4. Asynchronous Pipeline Orchestration with Server-Sent Events (SSE)
+
 - **Decision**: Built the ingestion pipeline on an event-driven architecture that communicates execution milestones to the client via Server-Sent Events (`/api/events`).
 - **Rationale**: Generative background replacement and multimodal audits involve dynamic latencies between 2 and 6 seconds. A synchronous blocking HTTP request introduces timeout risks on serverless platforms. SSE delivers lightweight, unidirectional real-time progress updates (Ingestion, Primary Audit, Transformation, Secondary Audit, Catalog Publishing) without the polling overhead of REST or the stateful infrastructure demands of full-duplex WebSockets.
 
